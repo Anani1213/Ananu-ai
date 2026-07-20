@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super AI - ጀሚኒ እና ቻትጂፒቲ ውህደት</title>
+    <!-- ማርክዳውን (Markdown) ለጽሁፍ አቀማመጥ -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- አይከኖች -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- የኮድ ማሳመሪያ -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-main: #f0f4f9;
+            --bg-chat: #ffffff;
+            --text-main: #1f1f1f;
+            --text-light: #444746;
+            --accent: #0b57d0;
+            --user-bubble: #e3e3e3;
+            --ai-bubble: #ffffff;
+            --border: #e0e0e0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Design */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .new-chat-btn {
+            background-color: #fff;
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-main);
+            box-shadow: 0 1px 3px var(--shadow);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .new-chat-btn:hover {
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        /* Main Chat Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-chat);
+            position: relative;
+        }
+
+        .header {
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-chat);
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            background: -webkit-linear-gradient(45deg, #4285f4, #d96570, #9b72cb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        .chat-container {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            scroll-behavior: smooth;
+        }
+
+        .message-wrapper {
+            display: flex;
+            gap: 16px;
+            max-width: 850px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .message-wrapper.user {
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .avatar.ai {
+            background: linear-gradient(135deg, #1a73e8, #8ab4f8);
+            color: white;
+        }
+
+        .avatar.user {
+            background-color: #5f6368;
+            color: white;
+        }
+
+        .message-content {
+            padding: 12px 18px;
+            border-radius: 18px;
+            font-size: 16px;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+
+        .message-wrapper.user .message-content {
+            background-color: var(--user-bubble);
+            border-top-right-radius: 4px;
+        }
+
+        .message-wrapper.ai .message-content {
+            background-color: var(--ai-bubble);
+            border: 1px solid var(--border);
+            border-top-left-radius: 4px;
+            width: 100%;
+        }
+
+        /* Input Area Design */
+        .input-container {
+            max-width: 850px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 30px;
+            background-color: var(--bg-chat);
+        }
+
+        .input-box {
+            display: flex;
+            align-items: flex-end;
+            background-color: var(--bg-main);
+            border-radius: 24px;
+            padding: 10px 15px;
+            gap: 10px;
+            transition: box-shadow 0.3s;
+        }
+
+        .input-box:focus-within {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 8px;
+            font-size: 16px;
+            resize: none;
+            min-height: 44px;
+            max-height: 200px;
+            color: var(--text-main);
+        }
+
+        .send-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .send-btn:hover {
+            background-color: #e8eaed;
+            color: var(--accent);
+        }
+
+        /* Loading Animation */
+        .status-text {
+            font-size: 13px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(11, 87, 208, 0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Markdown Styling */
+        .message-content h1, .message-content h2, .message-content h3 { margin-top: 15px; margin-bottom: 10px; }
+        .message-content p { margin-bottom: 10px; }
+        .message-content pre { 
+            background: #0d1117; 
+            padding: 15px; 
+            border-radius: 8px; 
+            overflow-x: auto; 
+            margin: 15px 0; 
+            color: #c9d1d9;
+        }
+        .message-content code { font-family: monospace; }
+        .message-content table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        .message-content th, .message-content td { border: 1px solid var(--border); padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button class="new-chat-btn" onclick="location.reload()">
+            <i class="fa-solid fa-plus"></i> አዲስ ውይይት
+        </button>
+        <div style="margin-top: 30px; font-size: 12px; color: var(--text-light);">
+            <p><i class="fa-solid fa-microchip"></i> Super AI Core</p>
+            <p style="margin-top: 10px;">የተቀናጁ ሞዴሎች፡</p>
+            <ul style="margin-left: 15px; margin-top: 5px;">
+                <li>Gemini Pro</li>
+                <li>GPT-3.5 Turbo</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>✨ Super AI (Gemini + ChatGPT)</h1>
+            <div style="font-size: 14px; color: var(--text-light);"><i class="fa-solid fa-circle-check" style="color: green;"></i> ሲስተም ዝግጁ ነው</div>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <!-- Welcome Message -->
+            <div class="message-wrapper ai">
+                <div class="avatar ai"><i class="fa-solid fa-sparkles"></i></div>
+                <div class="message-content">
+                    ሰላም! እኔ **Gemini** እና **ChatGPT**ን በማዋሃድ የተሰራሁ የላቀ AI ነኝ። ጥያቄዎን ያስገቡ፤ የሁለቱንም ሞዴሎች መልስ አነጻጽሬ እና አዋህጄ ምርጡን አቀርብልዎታለሁ። ፕሮግራም መጻፍ፣ ሲስተም ዲዛይን፣ ወይስ ሌላ ምን ልርዳዎት?
+                </div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <!-- Processing Status -->
+            <div id="loadingStatus" style="display: none;">
+                <div class="status-text">
+                    <div class="spinner"></div> <span id="statusText">መረጃ በማሰባሰብ ላይ...</span>
+                </div>
+            </div>
+
+            <div class="input-box">
+                <textarea id="userInput" placeholder="የሚፈልጉትን ጥያቄ እዚህ ይጻፉ..." oninput="autoResize(this)" onkeypress="handleEnter(event)"></textarea>
+                <button class="send-btn" onclick="processQuery()" id="sendBtn">
+                    <i class="fa-solid fa-paper-plane fa-lg"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ኤፒአይ ኪዎች (API Keys)
+        const GEMINI_API_KEY = "AIzaSyATTQbdLVcUjJZ2Vsr29ef9F4xXgN0dJrU";
+        const OPENAI_API_KEY = "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";
+
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const loadingStatus = document.getElementById('loadingStatus');
+        const statusText = document.getElementById('statusText');
+
+        // Textarea Auto-resize
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight < 200 ? textarea.scrollHeight : 200) + 'px';
+        }
+
+        // Enter key to send (Shift+Enter for new line)
+        function handleEnter(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                processQuery();
+            }
+        }
+
+        // Add message to chat UI
+        function appendMessage(role, text) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `message-wrapper ${role}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `avatar ${role}`;
+            avatar.innerHTML = role === 'user' ? '<i class="fa-solid fa-user"></i>' : '<i class="fa-solid fa-sparkles"></i>';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            
+            // Format output with Markdown if it's AI
+            if(role === 'ai') {
+                content.innerHTML = marked.parse(text);
+                // Apply syntax highlighting to code blocks
+                content.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            } else {
+                content.textContent = text;
+            }
+
+            wrapper.appendChild(avatar);
+            wrapper.appendChild(content);
+            chatContainer.appendChild(wrapper);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Main Orchestration Function
+        async function processQuery() {
+            const query = userInput.value.trim();
+            if (!query) return;
+
+            // 1. Display User Message
+            appendMessage('user', query);
+            userInput.value = '';
+            userInput.style.height = 'auto';
+            
+            // UI States
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+            loadingStatus.style.display = 'block';
+
+            try {
+                // 2. Fetch from both APIs simultaneously
+                statusText.innerText = "ከ Gemini እና ChatGPT መረጃ በመሰብሰብ ላይ...";
+                
+                const [geminiResult, chatgptResult] = await Promise.allSettled([
+                    fetchGemini(query),
+                    fetchChatGPT(query)
+                ]);
+
+                let geminiText = geminiResult.status === 'fulfilled' ? geminiResult.value : "Gemini አልሰራም።";
+                let chatgptText = chatgptResult.status === 'fulfilled' ? chatgptResult.value : "ChatGPT አልሰራም።";
+
+                // 3. Synthesize the answers using Gemini (Because Gemini supports Amharic natively very well)
+                statusText.innerText = "የሁለቱንም ሞዴሎች መልሶች በማዋሃድ እና በማሳመር ላይ (Synthesizing)...";
+                
+                const synthPrompt = `
+                ለሚከተለው ጥያቄ ተጠቃሚው የጠየቀው ይህ ነው፡ "${query}"
+                
+                Gemini የሰጠው መልስ፡
+                ${geminiText}
+                
+                ChatGPT የሰጠው መልስ፡
+                ${chatgptText}
+                
+                እንደ አንድ ልዕለ-አዋቂ (Super AI) የሁለቱንም መልሶች በጥንቃቄ አንብብ። ትክክለኛ የሆኑትን መረጃዎች አዋህድ፣ ስህተት ካለ አርም፣ እና እጅግ በጣም ፕሮፌሽናል፣ ግልጽ፣ እና የተዋበ የመጨረሻ መልስ በአማርኛ ቋንቋ አዘጋጅ። መልስህን ስትሰጥ የሁለቱን ስም መጥቀስ አይጠበቅብህም፤ ቀጥታ የተብራራውን መልስ ብቻ ስጥ። አቀራረብህ ማርክዳውን (Markdown) የተጠቀመ፣ አስፈላጊ ከሆነ ኮድ፣ ነጥቦች (bullets) እና ሰንጠረዥ ያለው ይሁን።
+                `;
+
+                const finalResponse = await fetchGemini(synthPrompt);
+
+                // 4. Display the Final Super Answer
+                loadingStatus.style.display = 'none';
+                appendMessage('ai', finalResponse);
+
+            } catch (error) {
+                console.error(error);
+                loadingStatus.style.display = 'none';
+                appendMessage('ai', 'ይቅርታ፣ ጥያቄውን ማስተናገድ አልተቻለም። እባክዎ የበይነመረብ ግንኙነትዎን እና የ API Keys ትክክለኛነት ያረጋግጡ።');
+            } finally {
+                userInput.disabled = false;
+                sendBtn.disabled = false;
+                userInput.focus();
+            }
+        }
+
+        // Gemini API Fetch Function
+        async function fetchGemini(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: 0.7 }
+                })
+            });
+            
+            if(!response.ok) throw new Error('Gemini API Error');
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        // ChatGPT API Fetch Function
+        async function fetchChatGPT(prompt) {
+            const url = 'https://api.openai.com/v1/chat/completions';
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENAI_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-3.5-turbo",
+                    messages: [{ role: "user", content: prompt }],
+                    temperature: 0.7
+                })
+            });
+
+            if(!response.ok) throw new Error('ChatGPT API Error');
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+    </script>
+</body>
+</html>
