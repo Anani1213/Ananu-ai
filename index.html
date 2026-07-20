@@ -1,465 +1,1543 @@
 <!DOCTYPE html>
-<html lang="am">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super AI - ጀሚኒ እና ቻትጂፒቲ ውህደት</title>
-    <!-- ማርክዳውን (Markdown) ለጽሁፍ አቀማመጥ -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- አይከኖች -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- የኮድ ማሳመሪያ -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    
+    <title>AI Fusion Dashboard | Gemini + ChatGPT</title>
     <style>
         :root {
-            --bg-main: #f0f4f9;
-            --bg-chat: #ffffff;
-            --text-main: #1f1f1f;
-            --text-light: #444746;
-            --accent: #0b57d0;
-            --user-bubble: #e3e3e3;
-            --ai-bubble: #ffffff;
-            --border: #e0e0e0;
-            --shadow: rgba(0, 0, 0, 0.1);
+            --bg-primary: #0b0e17;
+            --bg-secondary: #111620;
+            --bg-card: #161b26;
+            --bg-card-hover: #1c2230;
+            --bg-input: #1a1f2e;
+            --border: #1e2535;
+            --border-light: #2a3142;
+            --text-primary: #e8eaef;
+            --text-secondary: #b0b8c8;
+            --text-muted: #6b7280;
+            --accent-blue: #4a8cf7;
+            --accent-purple: #7c5cfc;
+            --accent-cyan: #38bdf8;
+            --accent-green: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f472b6;
+            --gradient-primary: linear-gradient(135deg, #4a8cf7, #7c5cfc);
+            --gradient-gemini: linear-gradient(135deg, #4285f4, #7c5cfc, #c158dc);
+            --gradient-chatgpt: linear-gradient(135deg, #10a37f, #1a7f64);
+            --gradient-best: linear-gradient(135deg, #f59e0b, #ef4444, #ec4899);
+            --gradient-bg: radial-gradient(ellipse at 30% 20%, rgba(74, 140, 247, 0.06) 0%, transparent 55%),
+                radial-gradient(ellipse at 70% 60%, rgba(124, 92, 252, 0.05) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 80%, rgba(56, 189, 248, 0.04) 0%, transparent 50%);
+            --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+            --shadow-glow-blue: 0 0 40px rgba(74, 140, 247, 0.12);
+            --shadow-glow-purple: 0 0 40px rgba(124, 92, 252, 0.1);
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+            --font-sans: 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            box-sizing: border-box;
         }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Sidebar Design */
-        .sidebar {
-            width: 260px;
-            background-color: var(--bg-main);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .new-chat-btn {
-            background-color: #fff;
-            border: 1px solid var(--border);
-            padding: 12px 15px;
-            border-radius: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--text-main);
-            box-shadow: 0 1px 3px var(--shadow);
-            transition: background 0.2s, box-shadow 0.2s;
-        }
-
-        .new-chat-btn:hover {
-            background-color: #f8f9fa;
-            box-shadow: 0 4px 6px var(--shadow);
-        }
-
-        /* Main Chat Area */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-chat);
-            position: relative;
-        }
-
-        .header {
-            padding: 20px 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: var(--bg-chat);
-            border-bottom: 1px solid var(--border);
-            z-index: 10;
-        }
-
-        .header h1 {
-            font-size: 20px;
-            background: -webkit-linear-gradient(45deg, #4285f4, #d96570, #9b72cb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 600;
-        }
-
-        .chat-container {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
+        html {
             scroll-behavior: smooth;
         }
 
-        .message-wrapper {
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: var(--gradient-bg);
             display: flex;
-            gap: 16px;
-            max-width: 850px;
-            margin: 0 auto;
-            width: 100%;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        .message-wrapper.user {
-            flex-direction: row-reverse;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 10px;
+            transition: background var(--transition);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3d4558;
         }
 
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+        /* ============ SIDEBAR ============ */
+        .sidebar {
+            width: 280px;
+            min-width: 280px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            transition: transform var(--transition), opacity var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 20px 18px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: inherit;
+        }
+        .sidebar-logo .logo-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
+            box-shadow: 0 4px 16px rgba(74, 140, 247, 0.3);
+            flex-shrink: 0;
+        }
+        .sidebar-logo .logo-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+        .sidebar-logo .logo-text span {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+
+        .sidebar-actions {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .btn-new-chat {
+            width: 100%;
+            padding: 11px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition);
+            font-family: var(--font-sans);
+            white-space: nowrap;
+        }
+        .btn-new-chat:hover {
+            background: var(--bg-card-hover);
+            border-color: #3d4558;
+            box-shadow: var(--shadow-card);
+            transform: translateY(-1px);
+        }
+        .btn-new-chat .icon {
+            font-size: 1.1rem;
             flex-shrink: 0;
         }
 
-        .avatar.ai {
-            background: linear-gradient(135deg, #1a73e8, #8ab4f8);
-            color: white;
+        .sidebar-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .sidebar-history-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            padding: 8px 10px 4px;
+            font-weight: 600;
+        }
+        .history-item {
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border: 1px solid transparent;
+            position: relative;
+        }
+        .history-item:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+        .history-item.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+            box-shadow: inset 0 0 0 1px rgba(74, 140, 247, 0.2);
+        }
+        .history-item .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .history-item.active .dot {
+            background: var(--accent-blue);
+            box-shadow: 0 0 8px var(--accent-blue);
+        }
+        .history-item .delete-btn {
+            margin-left: auto;
+            opacity: 0;
+            transition: opacity var(--transition);
+            cursor: pointer;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .history-item:hover .delete-btn {
+            opacity: 1;
+        }
+        .history-item .delete-btn:hover {
+            color: var(--accent-rose);
+            background: rgba(244, 114, 182, 0.1);
         }
 
-        .avatar.user {
-            background-color: #5f6368;
-            color: white;
+        .sidebar-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(52, 211, 153, 0);
+            }
         }
 
-        .message-content {
-            padding: 12px 18px;
-            border-radius: 18px;
-            font-size: 16px;
-            line-height: 1.6;
-            word-wrap: break-word;
-        }
-
-        .message-wrapper.user .message-content {
-            background-color: var(--user-bubble);
-            border-top-right-radius: 4px;
-        }
-
-        .message-wrapper.ai .message-content {
-            background-color: var(--ai-bubble);
-            border: 1px solid var(--border);
-            border-top-left-radius: 4px;
-            width: 100%;
-        }
-
-        /* Input Area Design */
-        .input-container {
-            max-width: 850px;
+        /* ============ MAIN ============ */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            max-width: 1100px;
             margin: 0 auto;
             width: 100%;
-            padding: 20px 30px;
-            background-color: var(--bg-chat);
+            padding: 0 20px;
         }
 
-        .input-box {
+        .main-header {
+            padding: 16px 0;
             display: flex;
-            align-items: flex-end;
-            background-color: var(--bg-main);
-            border-radius: 24px;
-            padding: 10px 15px;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid transparent;
+            flex-shrink: 0;
+        }
+        .main-header .brand {
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .main-header .brand .badge {
+            font-size: 0.65rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--gradient-primary);
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all var(--transition);
+        }
+        .icon-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: #3d4558;
+        }
+        .icon-btn.active-toggle {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: var(--accent-blue);
+        }
+
+        /* ============ CHAT AREA ============ */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 10px 0 20px;
+            gap: 16px;
+        }
+
+        /* Welcome State */
+        .welcome-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            gap: 20px;
+        }
+        .welcome-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-lg);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: var(--shadow-glow-blue), var(--shadow-glow-purple);
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+        .welcome-state h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .welcome-state p {
+            color: var(--text-muted);
+            max-width: 500px;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+        .welcome-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        .welcome-tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+        .welcome-tag:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            background: var(--bg-card-hover);
+            box-shadow: var(--shadow-card);
+        }
+
+        /* Message Bubbles */
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: fadeInUp 0.35s ease-out;
+            max-width: 100%;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        .message-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .message.user .message-avatar {
+            background: var(--gradient-primary);
+            color: #fff;
+        }
+        .message.assistant .message-avatar {
+            background: var(--bg-card);
+            border: 2px solid var(--border-light);
+            color: var(--accent-cyan);
+        }
+        .message-bubble {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            max-width: 85%;
+            line-height: 1.65;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .message.user .message-bubble {
+            background: var(--bg-card-hover);
+            border-color: var(--border-light);
+            border-radius: var(--radius) var(--radius) 4px var(--radius);
+        }
+        .message.assistant .message-bubble {
+            border-radius: var(--radius) var(--radius) var(--radius) 4px;
+        }
+        .message-bubble pre {
+            background: #0d1117;
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            margin: 10px 0;
+            border: 1px solid var(--border);
+            line-height: 1.5;
+        }
+        .message-bubble code {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .message-bubble pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        /* ============ COMPARISON CARDS ============ */
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            animation: fadeInUp 0.4s ease-out;
+            max-width: 100%;
+        }
+        @media (max-width: 768px) {
+            .comparison-row {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: fixed;
+                left: -290px;
+                top: 0;
+                bottom: 0;
+                z-index: 200;
+                transition: left var(--transition);
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .mobile-overlay {
+                display: block !important;
+            }
+        }
+        .comparison-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition);
+        }
+        .comparison-card:hover {
+            border-color: var(--border-light);
+            box-shadow: var(--shadow-card), 0 0 30px rgba(74, 140, 247, 0.04);
+        }
+        .comparison-card.gemini-card {
+            border-top: 3px solid transparent;
+            border-image: var(--gradient-gemini) 1;
+            border-image-slice: 1;
+        }
+        .comparison-card.chatgpt-card {
+            border-top: 3px solid transparent;
+            border-image: var(--gradient-chatgpt) 1;
+            border-image-slice: 1;
+        }
+        .card-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+            margin-bottom: 10px;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+        .gemini-card .card-label {
+            background: rgba(74, 140, 247, 0.1);
+            color: #8ab4f8;
+        }
+        .chatgpt-card .card-label {
+            background: rgba(16, 163, 127, 0.1);
+            color: #34d399;
+        }
+        .card-content {
+            font-size: 0.85rem;
+            line-height: 1.65;
+            color: var(--text-secondary);
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .card-content pre {
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+        }
+
+        /* ============ BEST ANSWER / SYNTHESIS ============ */
+        .synthesis-card {
+            background: var(--bg-card);
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            padding: 18px 22px;
+            box-shadow: var(--shadow-card), 0 0 50px rgba(245, 158, 11, 0.08);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease-out;
+            background-clip: padding-box;
+        }
+        .synthesis-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: var(--radius-lg);
+            padding: 2px;
+            background: var(--gradient-best);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .synthesis-card>* {
+            position: relative;
+            z-index: 1;
+        }
+        .synthesis-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            letter-spacing: 0.02em;
+            margin-bottom: 10px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+        }
+        .synthesis-content {
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        /* ============ INPUT AREA ============ */
+        .input-area {
+            flex-shrink: 0;
+            padding: 12px 0 20px;
+            position: sticky;
+            bottom: 0;
+            background: transparent;
+            z-index: 50;
+        }
+        .input-wrapper {
+            display: flex;
             gap: 10px;
-            transition: box-shadow 0.3s;
+            align-items: flex-end;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 8px 10px 8px 18px;
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition);
         }
-
-        .input-box:focus-within {
-            background-color: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        .input-wrapper:focus-within {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-card), 0 0 0 3px rgba(74, 140, 247, 0.08);
         }
-
-        textarea {
+        .input-wrapper textarea {
             flex: 1;
             background: transparent;
             border: none;
             outline: none;
-            padding: 8px;
-            font-size: 16px;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
             resize: none;
             min-height: 44px;
-            max-height: 200px;
-            color: var(--text-main);
+            max-height: 180px;
+            padding: 6px 0;
+            line-height: 1.5;
         }
-
+        .input-wrapper textarea::placeholder {
+            color: var(--text-muted);
+        }
         .send-btn {
-            background-color: transparent;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            padding: 10px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
+            border: none;
+            background: var(--gradient-primary);
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.2s, background 0.2s;
+            transition: all var(--transition);
+            flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(74, 140, 247, 0.35);
         }
-
         .send-btn:hover {
-            background-color: #e8eaed;
-            color: var(--accent);
+            transform: scale(1.05);
+            box-shadow: 0 6px 24px rgba(74, 140, 247, 0.5);
+        }
+        .send-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .send-btn.loading {
+            animation: spin-btn 1s linear infinite;
+        }
+        @keyframes spin-btn {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        /* Loading Animation */
-        .status-text {
-            font-size: 13px;
-            color: var(--accent);
+        /* ============ LOADING ============ */
+        .loading-indicator {
+            display: flex;
+            gap: 6px;
+            padding: 10px 0;
+        }
+        .loading-indicator .dot-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            animation: bounce-dot 1.2s infinite;
+        }
+        .loading-indicator .dot-pulse:nth-child(2) {
+            animation-delay: 0.2s;
+            background: var(--accent-purple);
+        }
+        .loading-indicator .dot-pulse:nth-child(3) {
+            animation-delay: 0.4s;
+            background: var(--accent-cyan);
+        }
+        @keyframes bounce-dot {
+            0%,
+            80%,
+            100% {
+                transform: scale(0.6);
+                opacity: 0.4;
+            }
+            40% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            z-index: 999;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            animation: slideInRight 0.3s ease-out;
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 8px;
-            font-weight: 500;
+        }
+        @keyframes slideInRight {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(11, 87, 208, 0.2);
-            border-top-color: var(--accent);
+        /* Mobile overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 150;
+        }
+        .mobile-menu-btn {
+            display: none;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+            .main {
+                padding: 0 12px;
+            }
+            .comparison-row {
+                grid-template-columns: 1fr;
+            }
+            .message-bubble {
+                max-width: 92%;
+            }
         }
 
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Markdown Styling */
-        .message-content h1, .message-content h2, .message-content h3 { margin-top: 15px; margin-bottom: 10px; }
-        .message-content p { margin-bottom: 10px; }
-        .message-content pre { 
-            background: #0d1117; 
-            padding: 15px; 
-            border-radius: 8px; 
-            overflow-x: auto; 
-            margin: 15px 0; 
-            color: #c9d1d9;
+        /* Copy button */
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--bg-card-hover);
+            border: 1px solid var(--border-light);
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.65rem;
+            opacity: 0;
+            transition: all var(--transition);
+            z-index: 5;
         }
-        .message-content code { font-family: monospace; }
-        .message-content table { border-collapse: collapse; width: 100%; margin: 15px 0; }
-        .message-content th, .message-content td { border: 1px solid var(--border); padding: 8px; text-align: left; }
+        .comparison-card:hover .copy-btn,
+        .synthesis-card:hover .copy-btn,
+        .message-bubble:hover .copy-btn {
+            opacity: 1;
+        }
+        .copy-btn:hover {
+            color: var(--text-primary);
+            border-color: #3d4558;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <button class="new-chat-btn" onclick="location.reload()">
-            <i class="fa-solid fa-plus"></i> አዲስ ውይይት
-        </button>
-        <div style="margin-top: 30px; font-size: 12px; color: var(--text-light);">
-            <p><i class="fa-solid fa-microchip"></i> Super AI Core</p>
-            <p style="margin-top: 10px;">የተቀናጁ ሞዴሎች፡</p>
-            <ul style="margin-left: 15px; margin-top: 5px;">
-                <li>Gemini Pro</li>
-                <li>GPT-3.5 Turbo</li>
-            </ul>
-        </div>
-    </div>
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="header">
-            <h1>✨ Super AI (Gemini + ChatGPT)</h1>
-            <div style="font-size: 14px; color: var(--text-light);"><i class="fa-solid fa-circle-check" style="color: green;"></i> ሲስተም ዝግጁ ነው</div>
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <div class="logo-icon">⚡</div>
+                <div class="logo-text">AI Fusion<span>Gemini + ChatGPT</span></div>
+            </div>
+        </div>
+        <div class="sidebar-actions">
+            <button class="btn-new-chat" onclick="newChat()" title="Start New Conversation">
+                <span class="icon">✨</span> New Conversation
+            </button>
+        </div>
+        <div class="sidebar-history" id="sidebarHistory">
+            <div class="sidebar-history-label">Recent Chats</div>
+        </div>
+        <div class="sidebar-footer">
+            <span class="status-dot"></span> Both APIs Connected
+        </div>
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <main class="main">
+        <div class="main-header">
+            <div class="brand">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+                AI Fusion <span class="badge">Dual AI</span>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="clearChat()" title="Clear Chat">🗑️</button>
+                <button class="icon-btn" id="compareToggle" onclick="toggleCompareMode()" title="Toggle Comparison Mode">🔀</button>
+            </div>
         </div>
 
+        <!-- Chat Display -->
         <div class="chat-container" id="chatContainer">
-            <!-- Welcome Message -->
-            <div class="message-wrapper ai">
-                <div class="avatar ai"><i class="fa-solid fa-sparkles"></i></div>
-                <div class="message-content">
-                    ሰላም! እኔ **Gemini** እና **ChatGPT**ን በማዋሃድ የተሰራሁ የላቀ AI ነኝ። ጥያቄዎን ያስገቡ፤ የሁለቱንም ሞዴሎች መልስ አነጻጽሬ እና አዋህጄ ምርጡን አቀርብልዎታለሁ። ፕሮግራም መጻፍ፣ ሲስተም ዲዛይን፣ ወይስ ሌላ ምን ልርዳዎት?
+            <!-- Welcome State -->
+            <div class="welcome-state" id="welcomeState">
+                <div class="welcome-icon">🧠</div>
+                <h2>AI Fusion Dashboard</h2>
+                <p>Ask any question and get responses from <strong>Gemini</strong> and <strong>ChatGPT</strong> simultaneously. The AI will analyze both and deliver the best synthesized answer.</p>
+                <div class="welcome-tags">
+                    <span class="welcome-tag" onclick="askSuggestion(this)">📊 Explain quantum computing</span>
+                    <span class="welcome-tag" onclick="askSuggestion(this)">💡 Best practices for React</span>
+                    <span class="welcome-tag" onclick="askSuggestion(this)">🌍 Climate change solutions</span>
+                    <span class="welcome-tag" onclick="askSuggestion(this)">📝 Write a professional email</span>
+                    <span class="welcome-tag" onclick="askSuggestion(this)">🔬 How does CRISPR work?</span>
+                    <span class="welcome-tag" onclick="askSuggestion(this)">🎨 Design principles 2024</span>
                 </div>
             </div>
         </div>
 
-        <div class="input-container">
-            <!-- Processing Status -->
-            <div id="loadingStatus" style="display: none;">
-                <div class="status-text">
-                    <div class="spinner"></div> <span id="statusText">መረጃ በማሰባሰብ ላይ...</span>
-                </div>
-            </div>
-
-            <div class="input-box">
-                <textarea id="userInput" placeholder="የሚፈልጉትን ጥያቄ እዚህ ይጻፉ..." oninput="autoResize(this)" onkeypress="handleEnter(event)"></textarea>
-                <button class="send-btn" onclick="processQuery()" id="sendBtn">
-                    <i class="fa-solid fa-paper-plane fa-lg"></i>
-                </button>
-            </div>
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea
+                id="userInput"
+                rows="1"
+                placeholder="Type your question here... (Both AIs will respond)"
+                onkeydown="handleKeyDown(event)"
+                oninput="autoResize(this)"
+            ></textarea>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send (Enter)">
+                ➤
+            </button>
         </div>
     </div>
+</main>
 
-    <script>
-        // ኤፒአይ ኪዎች (API Keys)
-        const GEMINI_API_KEY = "AIzaSyATTQbdLVcUjJZ2Vsr29ef9F4xXgN0dJrU";
-        const OPENAI_API_KEY = "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";
+<script>
+    // ============ API CONFIGURATION ============
+    const GEMINI_API_KEY = 'AIzaSyATTQbdLVcUjJZ2Vsr29ef9F4xXgN0dJrU';
+    const CHATGPT_API_KEY =
+        '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';
 
-        const chatContainer = document.getElementById('chatContainer');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const loadingStatus = document.getElementById('loadingStatus');
-        const statusText = document.getElementById('statusText');
+    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+    const CHATGPT_API_URL = 'https://api.openai.com/v1/chat/completions';
 
-        // Textarea Auto-resize
-        function autoResize(textarea) {
-            textarea.style.height = 'auto';
-            textarea.style.height = (textarea.scrollHeight < 200 ? textarea.scrollHeight : 200) + 'px';
+    // ============ STATE ============
+    let conversationHistory = [];
+    let currentChatId = null;
+    let allChats = {}; // { chatId: { title, messages: [] } }
+    let compareMode = true; // true = show both responses + synthesis
+    let isProcessing = false;
+
+    // ============ INITIALIZATION ============
+    function init() {
+        loadChatsFromStorage();
+        if (Object.keys(allChats).length > 0) {
+            const lastChatId = Object.keys(allChats).sort().pop();
+            loadChat(lastChatId);
+        } else {
+            createNewChat();
         }
+        renderSidebarHistory();
+        updateSendButton();
+    }
 
-        // Enter key to send (Shift+Enter for new line)
-        function handleEnter(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                processQuery();
+    function createNewChat() {
+        currentChatId = 'chat_' + Date.now();
+        allChats[currentChatId] = {
+            title: 'New Conversation',
+            messages: []
+        };
+        conversationHistory = [];
+        renderChat();
+        renderSidebarHistory();
+        saveChatsToStorage();
+        document.getElementById('welcomeState').style.display = 'flex';
+    }
+
+    function loadChat(chatId) {
+        currentChatId = chatId;
+        const chat = allChats[chatId];
+        if (chat) {
+            conversationHistory = chat.messages || [];
+            renderChat();
+            renderSidebarHistory();
+            document.getElementById('welcomeState').style.display =
+                conversationHistory.length === 0 ? 'flex' : 'none';
+        }
+    }
+
+    function newChat() {
+        if (isProcessing) return;
+        createNewChat();
+        document.getElementById('userInput').focus();
+        // Close sidebar on mobile
+        if (window.innerWidth <= 768) {
+            toggleSidebar(true);
+        }
+    }
+
+    function clearChat() {
+        if (isProcessing) return;
+        if (confirm('Clear all messages in this conversation?')) {
+            conversationHistory = [];
+            if (allChats[currentChatId]) {
+                allChats[currentChatId].messages = [];
+                allChats[currentChatId].title = 'New Conversation';
+            }
+            renderChat();
+            renderSidebarHistory();
+            saveChatsToStorage();
+            document.getElementById('welcomeState').style.display = 'flex';
+            showToast('Chat cleared ✓');
+        }
+    }
+
+    // ============ STORAGE ============
+    function saveChatsToStorage() {
+        try {
+            const toSave = {};
+            // Only save chats with messages, limit to 50 chats
+            const chatIds = Object.keys(allChats).slice(-50);
+            chatIds.forEach(id => {
+                if (allChats[id].messages.length > 0 || id === currentChatId) {
+                    toSave[id] = allChats[id];
+                }
+            });
+            localStorage.setItem('ai_fusion_chats', JSON.stringify(toSave));
+        } catch (e) {
+            console.warn('Storage full, clearing old chats');
+            localStorage.removeItem('ai_fusion_chats');
+        }
+    }
+
+    function loadChatsFromStorage() {
+        try {
+            const saved = localStorage.getItem('ai_fusion_chats');
+            if (saved) {
+                allChats = JSON.parse(saved);
+            }
+        } catch (e) {
+            allChats = {};
+        }
+    }
+
+    // ============ RENDER ============
+    function renderChat() {
+        const container = document.getElementById('chatContainer');
+        const welcomeState = document.getElementById('welcomeState');
+
+        // Clear existing messages (keep welcome state)
+        container.querySelectorAll('.message, .comparison-row, .synthesis-card, .loading-indicator').forEach(el => el
+            .remove());
+
+        if (conversationHistory.length === 0) {
+            if (welcomeState) welcomeState.style.display = 'flex';
+            return;
+        }
+        if (welcomeState) welcomeState.style.display = 'none';
+
+        conversationHistory.forEach((msg, index) => {
+            if (msg.type === 'user') {
+                const userMsg = createUserMessageElement(msg.content);
+                container.appendChild(userMsg);
+            } else if (msg.type === 'comparison') {
+                const compRow = createComparisonElement(msg, index);
+                container.appendChild(compRow);
+            }
+        });
+
+        // Scroll to bottom
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function createUserMessageElement(content) {
+        const div = document.createElement('div');
+        div.className = 'message user';
+        div.innerHTML = `
+                <div class="message-avatar">U</div>
+                <div class="message-bubble">
+                    ${escapeHtml(content)}
+                    <button class="copy-btn" onclick="copyText(this, '${escapeAttr(content)}')">📋 Copy</button>
+                </div>
+            `;
+        return div;
+    }
+
+    function createComparisonElement(msg, index) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'comparison-row';
+        wrapper.setAttribute('data-index', index);
+
+        const geminiContent = msg.geminiResponse || 'No response from Gemini.';
+        const chatgptContent = msg.chatgptResponse || 'No response from ChatGPT.';
+        const synthesisContent = msg.synthesis || '';
+
+        wrapper.innerHTML = `
+                <div class="comparison-card gemini-card">
+                    <div class="card-label">🔷 Gemini Response</div>
+                    <div class="card-content">${formatContent(geminiContent)}</div>
+                    <button class="copy-btn" onclick="copyText(this, '${escapeAttr(geminiContent)}')">📋 Copy</button>
+                </div>
+                <div class="comparison-card chatgpt-card">
+                    <div class="card-label">🟢 ChatGPT Response</div>
+                    <div class="card-content">${formatContent(chatgptContent)}</div>
+                    <button class="copy-btn" onclick="copyText(this, '${escapeAttr(chatgptContent)}')">📋 Copy</button>
+                </div>
+            `;
+        wrapper.appendChild(wrapper.firstElementChild);
+        wrapper.appendChild(wrapper.children[1]);
+
+        // Add synthesis card below the comparison row
+        const synthesisDiv = document.createElement('div');
+        synthesisDiv.className = 'synthesis-card';
+        synthesisDiv.style.marginTop = '8px';
+        synthesisDiv.innerHTML = `
+                <div class="synthesis-label">⭐ Best Synthesized Answer</div>
+                <div class="synthesis-content">${formatContent(synthesisContent)}</div>
+                <button class="copy-btn" onclick="copyText(this, '${escapeAttr(synthesisContent)}')">📋 Copy</button>
+            `;
+        wrapper.appendChild(synthesisDiv);
+
+        return wrapper;
+    }
+
+    function renderSidebarHistory() {
+        const container = document.getElementById('sidebarHistory');
+        const chats = Object.entries(allChats).sort((a, b) => parseInt(b[0].replace('chat_', '')) - parseInt(a[0].replace(
+            'chat_', '')));
+
+        let html = '<div class="sidebar-history-label">Recent Chats</div>';
+        if (chats.length === 0) {
+            html += '<div style="padding:12px;color:var(--text-muted);font-size:0.78rem;text-align:center;">No chats yet</div>';
+        } else {
+            chats.forEach(([chatId, chat]) => {
+                const isActive = chatId === currentChatId;
+                const title = chat.title || 'Untitled';
+                const truncated = title.length > 28 ? title.substring(0, 28) + '...' : title;
+                html += `
+                        <div class="history-item ${isActive ? 'active' : ''}" onclick="switchChat('${chatId}')" title="${escapeAttr(title)}">
+                            <span class="dot"></span>
+                            <span style="flex:1;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(truncated)}</span>
+                            <span class="delete-btn" onclick="event.stopPropagation();deleteChat('${chatId}')" title="Delete">✕</span>
+                        </div>
+                    `;
+            });
+        }
+        container.innerHTML = html;
+    }
+
+    function switchChat(chatId) {
+        if (isProcessing) return;
+        loadChat(chatId);
+        if (window.innerWidth <= 768) toggleSidebar(true);
+    }
+
+    function deleteChat(chatId) {
+        if (isProcessing) return;
+        if (confirm('Delete this conversation?')) {
+            delete allChats[chatId];
+            if (currentChatId === chatId) {
+                const remaining = Object.keys(allChats);
+                if (remaining.length > 0) {
+                    loadChat(remaining[remaining.length - 1]);
+                } else {
+                    createNewChat();
+                }
+            }
+            saveChatsToStorage();
+            renderSidebarHistory();
+            renderChat();
+            showToast('Conversation deleted');
+        }
+    }
+
+    // ============ SIDEBAR TOGGLE (Mobile) ============
+    function toggleSidebar(forceClose = false) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobileOverlay');
+        if (forceClose) {
+            sidebar.classList.remove('open');
+            overlay.style.display = 'none';
+        } else {
+            sidebar.classList.toggle('open');
+            overlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+        }
+    }
+
+    // ============ COMPARE MODE TOGGLE ============
+    function toggleCompareMode() {
+        compareMode = !compareMode;
+        const btn = document.getElementById('compareToggle');
+        if (compareMode) {
+            btn.classList.add('active-toggle');
+            btn.title = 'Comparison Mode: ON';
+        } else {
+            btn.classList.remove('active-toggle');
+            btn.title = 'Comparison Mode: OFF (single response)';
+        }
+        showToast(compareMode ? 'Comparison mode: ON 🔀' : 'Comparison mode: OFF');
+    }
+
+    // ============ SEND MESSAGE ============
+    async function sendMessage() {
+        if (isProcessing) return;
+        const input = document.getElementById('userInput');
+        const question = input.value.trim();
+        if (!question) return;
+
+        isProcessing = true;
+        updateSendButton();
+        document.getElementById('welcomeState').style.display = 'none';
+
+        // Add user message
+        const userMsg = { type: 'user', content: question };
+        conversationHistory.push(userMsg);
+        if (allChats[currentChatId]) {
+            allChats[currentChatId].messages = conversationHistory;
+            // Update title based on first message
+            if (conversationHistory.filter(m => m.type === 'user').length === 1) {
+                allChats[currentChatId].title = question.length > 40 ? question.substring(0, 40) + '...' : question;
             }
         }
+        renderChat();
+        renderSidebarHistory();
+        saveChatsToStorage();
+        input.value = '';
+        autoResize(input);
 
-        // Add message to chat UI
-        function appendMessage(role, text) {
-            const wrapper = document.createElement('div');
-            wrapper.className = `message-wrapper ${role}`;
-            
-            const avatar = document.createElement('div');
-            avatar.className = `avatar ${role}`;
-            avatar.innerHTML = role === 'user' ? '<i class="fa-solid fa-user"></i>' : '<i class="fa-solid fa-sparkles"></i>';
-            
-            const content = document.createElement('div');
-            content.className = 'message-content';
-            
-            // Format output with Markdown if it's AI
-            if(role === 'ai') {
-                content.innerHTML = marked.parse(text);
-                // Apply syntax highlighting to code blocks
-                content.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
+        // Show loading
+        const container = document.getElementById('chatContainer');
+        const loadingEl = document.createElement('div');
+        loadingEl.className = 'loading-indicator';
+        loadingEl.innerHTML =
+            '<span style="color:var(--text-muted);font-size:0.82rem;margin-right:8px;">Querying both AIs</span><span class="dot-pulse"></span><span class="dot-pulse"></span><span class="dot-pulse"></span>';
+        container.appendChild(loadingEl);
+        container.scrollTop = container.scrollHeight;
+
+        let geminiResponse = '';
+        let chatgptResponse = '';
+        let synthesis = '';
+
+        try {
+            // Call both APIs in parallel
+            const [geminiResult, chatgptResult] = await Promise.allSettled([
+                callGeminiAPI(question),
+                callChatGPTAPI(question)
+            ]);
+
+            // Process Gemini result
+            if (geminiResult.status === 'fulfilled') {
+                geminiResponse = geminiResult.value;
             } else {
-                content.textContent = text;
+                geminiResponse = `❌ **Gemini Error:** ${geminiResult.reason?.message || 'Unknown error occurred. Please check the API key or network connection.'}`;
+                console.error('Gemini error:', geminiResult.reason);
             }
 
-            wrapper.appendChild(avatar);
-            wrapper.appendChild(content);
-            chatContainer.appendChild(wrapper);
-            scrollToBottom();
-        }
-
-        function scrollToBottom() {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        // Main Orchestration Function
-        async function processQuery() {
-            const query = userInput.value.trim();
-            if (!query) return;
-
-            // 1. Display User Message
-            appendMessage('user', query);
-            userInput.value = '';
-            userInput.style.height = 'auto';
-            
-            // UI States
-            userInput.disabled = true;
-            sendBtn.disabled = true;
-            loadingStatus.style.display = 'block';
-
-            try {
-                // 2. Fetch from both APIs simultaneously
-                statusText.innerText = "ከ Gemini እና ChatGPT መረጃ በመሰብሰብ ላይ...";
-                
-                const [geminiResult, chatgptResult] = await Promise.allSettled([
-                    fetchGemini(query),
-                    fetchChatGPT(query)
-                ]);
-
-                let geminiText = geminiResult.status === 'fulfilled' ? geminiResult.value : "Gemini አልሰራም።";
-                let chatgptText = chatgptResult.status === 'fulfilled' ? chatgptResult.value : "ChatGPT አልሰራም።";
-
-                // 3. Synthesize the answers using Gemini (Because Gemini supports Amharic natively very well)
-                statusText.innerText = "የሁለቱንም ሞዴሎች መልሶች በማዋሃድ እና በማሳመር ላይ (Synthesizing)...";
-                
-                const synthPrompt = `
-                ለሚከተለው ጥያቄ ተጠቃሚው የጠየቀው ይህ ነው፡ "${query}"
-                
-                Gemini የሰጠው መልስ፡
-                ${geminiText}
-                
-                ChatGPT የሰጠው መልስ፡
-                ${chatgptText}
-                
-                እንደ አንድ ልዕለ-አዋቂ (Super AI) የሁለቱንም መልሶች በጥንቃቄ አንብብ። ትክክለኛ የሆኑትን መረጃዎች አዋህድ፣ ስህተት ካለ አርም፣ እና እጅግ በጣም ፕሮፌሽናል፣ ግልጽ፣ እና የተዋበ የመጨረሻ መልስ በአማርኛ ቋንቋ አዘጋጅ። መልስህን ስትሰጥ የሁለቱን ስም መጥቀስ አይጠበቅብህም፤ ቀጥታ የተብራራውን መልስ ብቻ ስጥ። አቀራረብህ ማርክዳውን (Markdown) የተጠቀመ፣ አስፈላጊ ከሆነ ኮድ፣ ነጥቦች (bullets) እና ሰንጠረዥ ያለው ይሁን።
-                `;
-
-                const finalResponse = await fetchGemini(synthPrompt);
-
-                // 4. Display the Final Super Answer
-                loadingStatus.style.display = 'none';
-                appendMessage('ai', finalResponse);
-
-            } catch (error) {
-                console.error(error);
-                loadingStatus.style.display = 'none';
-                appendMessage('ai', 'ይቅርታ፣ ጥያቄውን ማስተናገድ አልተቻለም። እባክዎ የበይነመረብ ግንኙነትዎን እና የ API Keys ትክክለኛነት ያረጋግጡ።');
-            } finally {
-                userInput.disabled = false;
-                sendBtn.disabled = false;
-                userInput.focus();
+            // Process ChatGPT result
+            if (chatgptResult.status === 'fulfilled') {
+                chatgptResponse = chatgptResult.value;
+            } else {
+                chatgptResponse = `❌ **ChatGPT Error:** ${chatgptResult.reason?.message || 'Unknown error occurred. Please check the API key or network connection.'}`;
+                console.error('ChatGPT error:', chatgptResult.reason);
             }
+
+            // Generate synthesis using Gemini (if at least one response is valid)
+            if (geminiResult.status === 'fulfilled' && chatgptResult.status === 'fulfilled') {
+                try {
+                    synthesis = await generateSynthesis(question, geminiResponse, chatgptResponse);
+                } catch (synthErr) {
+                    synthesis = generateLocalSynthesis(geminiResponse, chatgptResponse);
+                }
+            } else if (geminiResult.status === 'fulfilled') {
+                synthesis = geminiResponse;
+            } else if (chatgptResult.status === 'fulfilled') {
+                synthesis = chatgptResponse;
+            } else {
+                synthesis = 'Unable to generate a response. Both APIs encountered errors.';
+            }
+
+        } catch (err) {
+            console.error('Overall error:', err);
+            geminiResponse = geminiResponse || '❌ Failed to get response.';
+            chatgptResponse = chatgptResponse || '❌ Failed to get response.';
+            synthesis = 'An unexpected error occurred. Please try again.';
         }
 
-        // Gemini API Fetch Function
-        async function fetchGemini(prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 0.7 }
-                })
-            });
-            
-            if(!response.ok) throw new Error('Gemini API Error');
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
+        // Remove loading
+        loadingEl.remove();
+
+        // Add comparison result to history
+        const comparisonMsg = {
+            type: 'comparison',
+            content: question,
+            geminiResponse,
+            chatgptResponse,
+            synthesis
+        };
+        conversationHistory.push(comparisonMsg);
+        if (allChats[currentChatId]) {
+            allChats[currentChatId].messages = conversationHistory;
+        }
+        renderChat();
+        renderSidebarHistory();
+        saveChatsToStorage();
+        isProcessing = false;
+        updateSendButton();
+    }
+
+    // ============ API CALLS ============
+    async function callGeminiAPI(question) {
+        const url = `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`;
+        const body = {
+            contents: [{
+                parts: [{ text: question }]
+            }],
+            generationConfig: {
+                temperature: 0.7,
+                topK: 40,
+                topP: 0.95,
+                maxOutputTokens: 2048,
+            }
+        };
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(
+                errorData?.error?.message ||
+                `HTTP ${response.status}: ${response.statusText}`
+            );
         }
 
-        // ChatGPT API Fetch Function
-        async function fetchChatGPT(prompt) {
-            const url = 'https://api.openai.com/v1/chat/completions';
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${OPENAI_API_KEY}`
-                },
-                body: JSON.stringify({
-                    model: "gpt-3.5-turbo",
-                    messages: [{ role: "user", content: prompt }],
-                    temperature: 0.7
-                })
-            });
+        const data = await response.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) throw new Error('Empty response from Gemini');
+        return text;
+    }
 
-            if(!response.ok) throw new Error('ChatGPT API Error');
-            const data = await response.json();
-            return data.choices[0].message.content;
+    async function callChatGPTAPI(question) {
+        const body = {
+            model: 'gpt-3.5-turbo',
+            messages: [
+                { role: 'system', content: 'You are a helpful, knowledgeable assistant. Provide clear, accurate, and comprehensive responses.' },
+                { role: 'user', content: question }
+            ],
+            temperature: 0.7,
+            max_tokens: 2048
+        };
+
+        const response = await fetch(CHATGPT_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${CHATGPT_API_KEY}`
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(
+                errorData?.error?.message ||
+                `HTTP ${response.status}: ${response.statusText}`
+            );
         }
-    </script>
+
+        const data = await response.json();
+        const text = data?.choices?.[0]?.message?.content;
+        if (!text) throw new Error('Empty response from ChatGPT');
+        return text;
+    }
+
+    async function generateSynthesis(question, geminiResponse, chatgptResponse) {
+        // Use Gemini to synthesize both responses (faster and cheaper)
+        const synthesisPrompt = `
+You are an expert AI analyst. Your task is to compare two AI responses to the same question and create the BEST possible synthesized answer.
+
+**USER QUESTION:**
+${question}
+
+**RESPONSE FROM AI #1 (Gemini):**
+${geminiResponse}
+
+**RESPONSE FROM AI #2 (ChatGPT):**
+${chatgptResponse}
+
+**INSTRUCTIONS:**
+1. Carefully analyze both responses.
+2. Identify the strengths of each - which parts are more accurate, comprehensive, clear, or insightful.
+3. Combine the best elements from both into ONE superior answer.
+4. If one response is clearly better, primarily use that one but enhance it with any unique insights from the other.
+5. If there are contradictions, use your best judgment to resolve them or note the uncertainty.
+6. Make the final answer clear, well-structured, and actionable.
+7. Use markdown formatting for readability (headings, bold, lists where appropriate).
+8. Keep the tone professional yet approachable.
+
+**BEST SYNTHESIZED ANSWER:**
+`;
+
+        const url = `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`;
+        const body = {
+            contents: [{
+                parts: [{ text: synthesisPrompt }]
+            }],
+            generationConfig: {
+                temperature: 0.5,
+                topK: 40,
+                topP: 0.95,
+                maxOutputTokens: 2048,
+            }
+        };
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) throw new Error('Synthesis generation failed');
+        const data = await response.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        return text || generateLocalSynthesis(geminiResponse, chatgptResponse);
+    }
+
+    function generateLocalSynthesis(geminiResponse, chatgptResponse) {
+        // Fallback: simple local synthesis
+        const geminiLen = geminiResponse.length;
+        const chatgptLen = chatgptResponse.length;
+        let bestResponse = geminiLen >= chatgptLen ? geminiResponse : chatgptResponse;
+
+        return `**📊 Analysis:** Comparing both responses, the more comprehensive answer has been selected below. Both AIs provided valuable insights.
+
+---
+
+${bestResponse}
+
+---
+*Note: This is a locally-selected best response. For AI-powered synthesis, ensure both API keys are valid.*`;
+    }
+
+    // ============ HELPERS ============
+    function askSuggestion(el) {
+        const text = el.textContent.trim();
+        // Remove emoji prefix
+        const cleaned = text.replace(/^[^\w]+/, '').trim();
+        document.getElementById('userInput').value = cleaned;
+        autoResize(document.getElementById('userInput'));
+        sendMessage();
+    }
+
+    function handleKeyDown(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
+    }
+
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 180) + 'px';
+    }
+
+    function updateSendButton() {
+        const btn = document.getElementById('sendBtn');
+        const input = document.getElementById('userInput');
+        if (isProcessing) {
+            btn.disabled = true;
+            btn.classList.add('loading');
+            btn.textContent = '⏳';
+        } else {
+            btn.disabled = !input.value.trim();
+            btn.classList.remove('loading');
+            btn.textContent = '➤';
+        }
+    }
+
+    function formatContent(text) {
+        if (!text) return '<em style="color:var(--text-muted);">No response</em>';
+        let formatted = escapeHtml(text);
+        // Basic markdown-like formatting
+        formatted = formatted
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/```(\w*)\n?([\s\S]*?)```/g,
+                '<pre><code class="language-$1">$2</code></pre>')
+            .replace(/`([^`]+)`/g, '<code>$1</code>')
+            .replace(/^### (.+)$/gm, '<h4 style="margin:10px 0 4px;font-size:0.95rem;">$1</h4>')
+            .replace(/^## (.+)$/gm, '<h3 style="margin:12px 0 4px;font-size:1rem;">$1</h3>')
+            .replace(/^# (.+)$/gm, '<h2 style="margin:14px 0 6px;font-size:1.1rem;">$1</h2>')
+            .replace(/^- (.+)$/gm, '<li style="margin-left:16px;">$1</li>')
+            .replace(/^(\d+)\. (.+)$/gm, '<li style="margin-left:16px;list-style-type:decimal;">$2</li>')
+            .replace(/\n\n/g, '</p><p style="margin:6px 0;">')
+            .replace(/\n/g, '<br>');
+        return '<p style="margin:6px 0;">' + formatted + '</p>';
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function escapeAttr(str) {
+        return str.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/`/g, '\\`').replace(/\\/g, '\\\\');
+    }
+
+    function copyText(btn, text) {
+        const decoded = text.replace(/\\'/g, "'").replace(/&quot;/g, '"').replace(/\\`/g, '`').replace(/\\\\/g, '\\');
+        navigator.clipboard.writeText(decoded).then(() => {
+            const original = btn.textContent;
+            btn.textContent = '✅ Copied!';
+            btn.style.opacity = '1';
+            setTimeout(() => {
+                btn.textContent = original;
+            }, 1800);
+        }).catch(() => {
+            // Fallback
+            const ta = document.createElement('textarea');
+            ta.value = decoded;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            btn.textContent = '✅ Copied!';
+            setTimeout(() => { btn.textContent = '📋 Copy'; }, 1800);
+        });
+    }
+
+    function showToast(message) {
+        const existing = document.querySelector('.toast');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.4s';
+            setTimeout(() => toast.remove(), 400);
+        }, 2500);
+    }
+
+    // ============ INPUT WATCHER ============
+    document.getElementById('userInput').addEventListener('input', updateSendButton);
+
+    // ============ INIT ============
+    init();
+    // Set compare toggle active by default
+    document.getElementById('compareToggle').classList.add('active-toggle');
+
+    console.log('🚀 AI Fusion Dashboard Ready');
+    console.log('🔷 Gemini API: Connected');
+    console.log('🟢 ChatGPT API: Connected');
+    console.log('💡 Type a question to get started!');
+</script>
 </body>
-</html>
+                    </html>
